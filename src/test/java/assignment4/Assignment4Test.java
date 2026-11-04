@@ -1,0 +1,11 @@
+package assignment4;
+import assignment4.edit.*; import assignment4.search.*; import static org.junit.jupiter.api.Assertions.*; import java.util.*; import org.junit.jupiter.api.Test;
+public class Assignment4Test {
+ @Test void editReferences(){for(EditDistance e:List.of(new RecursiveEditDistance(),new TableEditDistance(),new TwoRowEditDistance())){assertEquals(3,e.distance("kitten","sitting"));assertEquals(2,e.distance("flaw","lawn"));assertEquals(5,e.distance("intention","execution"));assertEquals(3,e.distance("","abc"));assertEquals(0,e.distance("abc","abc"));}}
+ @Test void randomEdit(){Random r=new Random(41);for(int k=0;k<100;k++){String a=random(r,r.nextInt(7)),b=random(r,r.nextInt(7));int x=new TableEditDistance().distance(a,b);assertEquals(x,new TwoRowEditDistance().distance(a,b));assertEquals(x,new RecursiveEditDistance().distance(a,b));}}
+ @Test void lps(){KmpSearch k=new KmpSearch();assertArrayEquals(new int[]{0,1,2,0,1,2,3,3},k.lps("AAACAAAA"));assertArrayEquals(new int[]{0,0,1,2,0,1,2,3,4},k.lps("ABABCABAB"));assertArrayEquals(new int[0],k.lps(""));}
+ @Test void searches(){assertEquals(List.of(10),new NaiveSearch().search("ABABDABACDABABCABAB","ABABCABAB"));assertEquals(List.of(10),new KmpSearch().search("ABABDABACDABABCABAB","ABABCABAB"));assertEquals(List.of(0,1,2,3),new NaiveSearch().search("AAAAA","AA"));assertEquals(List.of(0,1,2,3),new KmpSearch().search("AAAAA","AA"));assertEquals(List.of(0,2,4),new NaiveSearch().search("ABABABA","ABA"));assertEquals(List.of(0,2,4),new KmpSearch().search("ABABABA","ABA"));}
+ @Test void edgeCases(){assertThrows(IllegalArgumentException.class,()->new NaiveSearch().search("a",""));assertThrows(IllegalArgumentException.class,()->new KmpSearch().search("a",""));assertTrue(new NaiveSearch().search("a","abcd").isEmpty());assertTrue(new KmpSearch().search("a","abcd").isEmpty());assertTrue(new NaiveSearch().search("","a").isEmpty());}
+ @Test void randomSearch(){Random r=new Random(73);for(int k=0;k<100;k++){String t=random(r,r.nextInt(35)),p=random(r,1+r.nextInt(10));assertEquals(new NaiveSearch().search(t,p),new KmpSearch().search(t,p));}}
+ static String random(Random r,int n){StringBuilder s=new StringBuilder();for(int i=0;i<n;i++)s.append((char)('A'+r.nextInt(4)));return s.toString();}
+}
